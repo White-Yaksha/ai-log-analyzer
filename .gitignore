@@ -1,0 +1,25 @@
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Project data (generated at runtime)
+ai_incident_investigator/data/vector_index/*
+ai_incident_investigator/data/embedding_cache/*
+ai_incident_investigator/data/repos/
+
+# Test/cache
+.pytest_cache/
+.coverage
+
+# OS
+.DS_Store
+Thumbs.db
