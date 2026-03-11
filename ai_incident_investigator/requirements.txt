@@ -1,0 +1,9 @@
+requests>=2.31.0
+sentence-transformers>=2.2.0
+faiss-cpu>=1.7.4
+transformers>=4.36.0
+torch>=2.1.0
+gitpython>=3.1.40
+pyyaml>=6.0
+bitsandbytes>=0.41.0
+pytest>=7.4.0
