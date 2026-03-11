@@ -42,7 +42,7 @@ An AI-powered debugging assistant for distributed systems. It analyzes Airflow D
 ```bash
 # 1. Clone this repo
 git clone https://github.com/white-yaksha/ai-log-analyzer.git
-cd ai-log-analyzer/ai_incident_investigator
+cd ai-log-analyzer
 
 # 2. Create a virtual environment (recommended)
 python -m venv .venv
@@ -57,12 +57,12 @@ python -m venv .venv
 pip install -r requirements.txt
 
 # 4. Index your org's GitHub repository
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --repo https://github.com/your-org/your-project \
   --reindex
 
 # 5. Analyze a failure log
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --log-file path/to/your/failure.log \
   --repo https://github.com/your-org/your-project
 ```
@@ -80,7 +80,7 @@ This section walks through a complete real-world scenario — investigating a fa
 ```bash
 # Clone the AI Incident Investigator
 git clone https://github.com/white-yaksha/ai-log-analyzer.git
-cd ai-log-analyzer/ai_incident_investigator
+cd ai-log-analyzer
 
 # Create and activate a virtual environment
 python -m venv .venv
@@ -144,12 +144,12 @@ Before analyzing any failures, the tool needs to build a searchable index of you
 
 ```bash
 # Index a public repo
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --repo https://github.com/your-org/your-project \
   --reindex
 
 # Index a private repo (uses GITHUB_TOKEN from environment)
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --repo https://github.com/your-org/private-service \
   --reindex
 ```
@@ -179,7 +179,7 @@ Copy/save the failure log from your monitoring system, Airflow UI, or log aggreg
 
 ```bash
 # Save your failure log to a file first, then:
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --log-file C:\logs\dag_failure_2026-03-08.log \
   --repo https://github.com/your-org/your-project
 ```
@@ -205,7 +205,7 @@ KafkaTimeoutException: Failed to send message after 3 retries
 If your Airflow instance has the REST API enabled:
 
 ```bash
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --dag shipment_pipeline \
   --run scheduled__2026-03-08T06:00:00+00:00 \
   --task process_events \
@@ -273,7 +273,7 @@ RETRIEVED CODE REFERENCES:
 For integration with ticketing systems (Jira, ServiceNow, PagerDuty):
 
 ```bash
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --log-file C:\logs\dag_failure.log \
   --repo https://github.com/your-org/your-project \
   --output-format json
@@ -322,7 +322,7 @@ Output:
 
 ```bash
 git clone https://github.com/white-yaksha/ai-log-analyzer.git
-cd ai-log-analyzer/ai_incident_investigator
+cd ai-log-analyzer
 
 python -m venv .venv
 
@@ -372,8 +372,7 @@ python -c "import faiss; print('faiss-cpu:', faiss.__version__)"
 python -c "import torch; print('torch:', torch.__version__, '| CUDA:', torch.cuda.is_available())"
 
 # Run the test suite (all 82 tests should pass)
-cd ai_incident_investigator
-pytest tests/ -v
+pytest ai_incident_investigator/tests/ -v
 ```
 
 ---
@@ -414,7 +413,7 @@ export AIRFLOW_PASSWORD="your_password"
 ## CLI Reference
 
 ```
-python cli/analyze_incident.py [OPTIONS]
+python ai_incident_investigator/cli/analyze_incident.py [OPTIONS]
 ```
 
 ### All Available Options
@@ -458,7 +457,7 @@ python cli/analyze_incident.py [OPTIONS]
 ### Example 1: Analyze a local log file against your org repo
 
 ```bash
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --log-file /var/log/airflow/dag_failures/shipment_pipeline_2026-03-08.log \
   --repo https://github.com/your-org/shipment-service
 ```
@@ -466,7 +465,7 @@ python cli/analyze_incident.py \
 ### Example 2: Pull logs directly from Airflow and analyze
 
 ```bash
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --dag shipment_pipeline \
   --run scheduled__2026-03-08T06:00:00+00:00 \
   --task process_events \
@@ -476,7 +475,7 @@ python cli/analyze_incident.py \
 ### Example 3: Re-index your repo after a code deploy
 
 ```bash
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --repo https://github.com/your-org/shipment-service \
   --reindex
 ```
@@ -484,7 +483,7 @@ python cli/analyze_incident.py \
 ### Example 4: Use a different LLM model with more code snippets
 
 ```bash
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --log-file failure.log \
   --repo https://github.com/your-org/shipment-service \
   --model meta-llama/Llama-3-8B-Instruct \
@@ -494,7 +493,7 @@ python cli/analyze_incident.py \
 ### Example 5: JSON output for scripting / automation
 
 ```bash
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --log-file failure.log \
   --repo https://github.com/your-org/shipment-service \
   --output-format json > incident_report.json
@@ -506,7 +505,7 @@ python cli/analyze_incident.py \
 # Set token first
 export GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --log-file failure.log \
   --repo https://github.com/your-org/private-service \
   --verbose
@@ -515,7 +514,7 @@ python cli/analyze_incident.py \
 ### Example 7: Full Airflow mode with all connection details inline
 
 ```bash
-python cli/analyze_incident.py \
+python ai_incident_investigator/cli/analyze_incident.py \
   --dag etl_daily_ingest \
   --run scheduled__2026-03-10T00:00:00+00:00 \
   --task load_to_warehouse \
@@ -723,41 +722,43 @@ After retrieving code snippets, the system computes `mean(similarity_scores)` cl
 ## Project Structure
 
 ```
-ai_incident_investigator/
-├── cli/
-│   ├── __init__.py
-│   └── analyze_incident.py       # CLI entry point (argparse interface)
-├── src/
-│   ├── __init__.py
-│   ├── incident_analyzer.py      # Main orchestrator — coordinates full pipeline
-│   ├── airflow_client.py         # Airflow REST API client (log fetching)
-│   ├── log_parser.py             # Log parsing: errors, stack traces, timelines
-│   ├── code_indexer.py           # Code chunking + embedding + FAISS indexing
-│   ├── github_repo_manager.py    # Git clone/pull and source file discovery
-│   ├── retriever.py              # Semantic search with stack trace priority boosting
-│   ├── llm_engine.py             # HuggingFace LLM inference (4-bit quantization)
-│   ├── embeddings.py             # SentenceTransformer embedding model wrapper
-│   ├── embedding_cache.py        # SHA-256 hash-keyed embedding cache
-│   ├── context_builder.py        # Prompt assembly from logs + retrieved code
-│   └── vector_store.py           # FAISS IndexFlatIP vector store
-├── data/
-│   ├── embedding_cache/          # Persisted embedding cache files
-│   └── vector_index/             # Persisted FAISS index files
-├── tests/
-│   ├── __init__.py
-│   ├── test_airflow_client.py
-│   ├── test_log_parser.py
-│   ├── test_github_repo_manager.py
-│   ├── test_code_indexer.py
-│   ├── test_embeddings.py
-│   ├── test_embedding_cache.py
-│   ├── test_vector_store.py
-│   ├── test_retriever.py
-│   ├── test_context_builder.py
-│   ├── test_llm_engine.py
-│   └── test_incident_analyzer.py
-├── requirements.txt              # Python dependencies
-└── README.md                     # This file
+ai-log-analyzer/                          # Repository root
+├── .gitignore                            # Git ignore rules
+├── requirements.txt                      # Python dependencies
+├── README.md                             # This file
+└── ai_incident_investigator/             # Main package
+    ├── cli/
+    │   ├── __init__.py
+    │   └── analyze_incident.py           # CLI entry point (argparse interface)
+    ├── src/
+    │   ├── __init__.py
+    │   ├── incident_analyzer.py          # Main orchestrator — coordinates full pipeline
+    │   ├── airflow_client.py             # Airflow REST API client (log fetching)
+    │   ├── log_parser.py                 # Log parsing: errors, stack traces, timelines
+    │   ├── code_indexer.py               # Code chunking + embedding + FAISS indexing
+    │   ├── github_repo_manager.py        # Git clone/pull and source file discovery
+    │   ├── retriever.py                  # Semantic search with stack trace priority boosting
+    │   ├── llm_engine.py                 # HuggingFace LLM inference (4-bit quantization)
+    │   ├── embeddings.py                 # SentenceTransformer embedding model wrapper
+    │   ├── embedding_cache.py            # SHA-256 hash-keyed embedding cache
+    │   ├── context_builder.py            # Prompt assembly from logs + retrieved code
+    │   └── vector_store.py               # FAISS IndexFlatIP vector store
+    ├── data/
+    │   ├── embedding_cache/              # Persisted embedding cache files
+    │   └── vector_index/                 # Persisted FAISS index files
+    └── tests/
+        ├── __init__.py
+        ├── test_airflow_client.py
+        ├── test_log_parser.py
+        ├── test_github_repo_manager.py
+        ├── test_code_indexer.py
+        ├── test_embeddings.py
+        ├── test_embedding_cache.py
+        ├── test_vector_store.py
+        ├── test_retriever.py
+        ├── test_context_builder.py
+        ├── test_llm_engine.py
+        └── test_incident_analyzer.py
 ```
 
 ---
@@ -782,13 +783,13 @@ ai_incident_investigator/
 
 ```bash
 # Run all 82 tests
-pytest tests/ -v
+pytest ai_incident_investigator/tests/ -v
 
 # Run a specific test file
 pytest tests/test_log_parser.py -v
 
 # Run with output capture disabled (see print statements)
-pytest tests/ -v -s
+pytest ai_incident_investigator/tests/ -v -s
 ```
 
 All tests are self-contained — they mock external dependencies (Airflow API, GitHub, LLM models) and require no network access, GPU, or model downloads.
@@ -814,7 +815,7 @@ On the first run, `sentence-transformers/all-MiniLM-L6-v2` (~80MB) is downloaded
 Try a smaller model or ensure quantization is enabled:
 ```bash
 # Use the smaller Phi-3 mini (default, ~2.4GB with 4-bit quantization)
-python cli/analyze_incident.py --model microsoft/Phi-3-mini-4k-instruct ...
+python ai_incident_investigator/cli/analyze_incident.py --model microsoft/Phi-3-mini-4k-instruct ...
 
 # Or disable quantization if bitsandbytes causes issues (needs more RAM)
 ```
