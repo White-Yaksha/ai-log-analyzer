@@ -77,7 +77,7 @@ def get(key: str, *, section: Optional[str] = None, env_var: Optional[str] = Non
     else:
         value = cfg.get(key)
 
-    return str(value) if value is not None else None
+    return str(value) if value else None
 
 
 def _bootstrap_config() -> None:
@@ -102,10 +102,12 @@ def generate_sample_config() -> str:
 # Place this file at: ~/.ai-incident-investigator/config.yaml
 
 github:
-  token: "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+  # Generate a token at: https://github.com/settings/tokens
+  # Required scopes: repo (Full control of private repositories)
+  token: ""
 
 airflow:
-  url: "https://airflow.your-company.com"
-  user: "your_username"
-  password: "your_password"
+  url: ""
+  user: ""
+  password: ""
 """

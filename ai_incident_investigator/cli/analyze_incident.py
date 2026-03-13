@@ -20,8 +20,6 @@ import textwrap
 # ---------------------------------------------------------------------------
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from src.incident_analyzer import IncidentAnalyzer  # noqa: E402
-
 logger = logging.getLogger(__name__)
 
 
@@ -208,6 +206,10 @@ def main() -> None:
     validate_args(args)
 
     try:
+        # Defer heavy imports (torch, transformers, etc.) to avoid slow startup
+        # for lightweight commands like --init-config.
+        from src.incident_analyzer import IncidentAnalyzer
+
         # -- Instantiate the analyser --
         analyzer = IncidentAnalyzer(
             airflow_url=args.airflow_url,
