@@ -30,9 +30,11 @@ class AirflowClient:
         username: Optional[str] = None,
         password: Optional[str] = None,
     ) -> None:
-        self.base_url = (base_url or os.environ.get("AIRFLOW_URL", "")).rstrip("/")
-        self.username = username or os.environ.get("AIRFLOW_USER")
-        self.password = password or os.environ.get("AIRFLOW_PASSWORD")
+        from src.config import get as cfg_get
+
+        self.base_url = (base_url or cfg_get("url", section="airflow", env_var="AIRFLOW_URL") or "").rstrip("/")
+        self.username = username or cfg_get("user", section="airflow", env_var="AIRFLOW_USER")
+        self.password = password or cfg_get("password", section="airflow", env_var="AIRFLOW_PASSWORD")
 
         if not self.base_url:
             logger.warning(

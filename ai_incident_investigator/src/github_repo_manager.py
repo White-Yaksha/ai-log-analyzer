@@ -29,7 +29,9 @@ class GitHubRepoManager:
             token: GitHub personal access token. Falls back to the
                 ``GITHUB_TOKEN`` environment variable when not provided.
         """
-        self.token = token or os.environ.get("GITHUB_TOKEN")
+        from src.config import get as cfg_get
+
+        self.token = token or cfg_get("token", section="github", env_var="GITHUB_TOKEN")
         if not self.token:
             logger.warning(
                 "No GitHub token provided. Private repositories will not be accessible."

@@ -111,32 +111,46 @@ pip install pytest                # Testing framework
 
 ### Step 2: Configure Credentials
 
-Set environment variables for your org's services:
+The recommended approach is to use a **config file**. Run the following command to generate a sample:
 
 ```bash
-# ── For private GitHub repos ──
-# Generate a token at: https://github.com/settings/tokens
-# Required scopes: repo (Full control of private repositories)
+python analyze_incident.py --init-config
+```
 
+This creates `~/.ai-incident-investigator/config.yaml`. Open it and fill in your credentials:
+
+```yaml
+# ~/.ai-incident-investigator/config.yaml
+
+github:
+  token: "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+airflow:
+  url: "https://airflow.your-company.com"
+  user: "your_username"
+  password: "your_password"
+```
+
+> **Note:** Environment variables (`GITHUB_TOKEN`, `AIRFLOW_URL`, etc.) and CLI arguments still work and take precedence over the config file.
+
+<details>
+<summary>Alternative: set environment variables directly</summary>
+
+```bash
 # Windows (PowerShell):
 $env:GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# macOS/Linux:
-# export GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-
-# ── For Airflow log fetching (skip if using local log files) ──
-# Windows (PowerShell):
 $env:AIRFLOW_URL="https://airflow.your-company.com"
 $env:AIRFLOW_USER="your_username"
 $env:AIRFLOW_PASSWORD="your_password"
 
 # macOS/Linux:
+# export GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 # export AIRFLOW_URL="https://airflow.your-company.com"
 # export AIRFLOW_USER="your_username"
 # export AIRFLOW_PASSWORD="your_password"
 ```
 
-> **Tip:** Add these to your shell profile (`.bashrc`, `.zshrc`, or PowerShell `$PROFILE`) so they persist across sessions.
+</details>
 
 ### Step 3: Index Your Organization's Codebase
 
@@ -379,7 +393,29 @@ pytest ai_incident_investigator/tests/ -v
 
 ## Configuration
 
+### Config File (Recommended)
+
+Run `python analyze_incident.py --init-config` to create a config file at:
+
+```
+~/.ai-incident-investigator/config.yaml
+```
+
+```yaml
+github:
+  token: "ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+airflow:
+  url: "https://airflow.your-company.com"
+  user: "your_username"
+  password: "your_password"
+```
+
+**Precedence order** (first wins): CLI arguments → environment variables → config file.
+
 ### Environment Variables
+
+Environment variables are still supported and override config file values.
 
 | Variable           | Description                                       | When Required             |
 |--------------------|---------------------------------------------------|---------------------------|
