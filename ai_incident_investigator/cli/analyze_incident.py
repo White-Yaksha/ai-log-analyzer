@@ -194,16 +194,15 @@ def main() -> None:
 
     # -- Bootstrap config file --
     if args.init_config:
-        from src.config import generate_sample_config, get_config_path
+        from src.config import get_config_path, _bootstrap_config
 
         config_path = get_config_path()
-        config_path.parent.mkdir(parents=True, exist_ok=True)
         if config_path.exists():
             print(f"Config file already exists at {config_path}")
-            sys.exit(0)
-        config_path.write_text(generate_sample_config(), encoding="utf-8")
-        print(f"Sample config created at {config_path}")
-        print("Edit the file and fill in your credentials.")
+        else:
+            _bootstrap_config()
+            print(f"Sample config created at {config_path}")
+            print("Edit the file and fill in your credentials.")
         return
 
     validate_args(args)

@@ -34,7 +34,7 @@ def _load_config() -> dict[str, Any]:
         return _config
 
     if not _CONFIG_FILE.is_file():
-        logger.debug("Config file not found at %s – using defaults.", _CONFIG_FILE)
+        _bootstrap_config()
         _config = {}
         return _config
 
@@ -78,6 +78,16 @@ def get(key: str, *, section: Optional[str] = None, env_var: Optional[str] = Non
         value = cfg.get(key)
 
     return str(value) if value is not None else None
+
+
+def _bootstrap_config() -> None:
+    """Create the config directory and a sample config file on first run."""
+    try:
+        _CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+        _CONFIG_FILE.write_text(generate_sample_config(), encoding="utf-8")
+        logger.info("Created sample config at %s – edit it to add your credentials.", _CONFIG_FILE)
+    except OSError:
+        logger.debug("Could not create config file at %s – skipping.", _CONFIG_FILE, exc_info=True)
 
 
 def get_config_path() -> Path:
