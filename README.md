@@ -57,12 +57,12 @@ python -m venv .venv
 pip install -r requirements.txt
 
 # 4. Index your org's GitHub repository
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --repo https://github.com/your-org/your-project \
   --reindex
 
 # 5. Analyze a failure log
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --log-file path/to/your/failure.log \
   --repo https://github.com/your-org/your-project
 ```
@@ -114,7 +114,7 @@ pip install pytest                # Testing framework
 The recommended approach is to use a **config file**. Run the following command to generate a sample:
 
 ```bash
-python analyze_incident.py --init-config
+python run.py --init-config
 ```
 
 This creates `~/.ai-incident-investigator/config.yaml`. Open it and fill in your credentials:
@@ -158,12 +158,12 @@ Before analyzing any failures, the tool needs to build a searchable index of you
 
 ```bash
 # Index a public repo
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --repo https://github.com/your-org/your-project \
   --reindex
 
 # Index a private repo (uses GITHUB_TOKEN from environment)
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --repo https://github.com/your-org/private-service \
   --reindex
 ```
@@ -193,7 +193,7 @@ Copy/save the failure log from your monitoring system, Airflow UI, or log aggreg
 
 ```bash
 # Save your failure log to a file first, then:
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --log-file C:\logs\dag_failure_2026-03-08.log \
   --repo https://github.com/your-org/your-project
 ```
@@ -219,7 +219,7 @@ KafkaTimeoutException: Failed to send message after 3 retries
 If your Airflow instance has the REST API enabled:
 
 ```bash
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --dag shipment_pipeline \
   --run scheduled__2026-03-08T06:00:00+00:00 \
   --task process_events \
@@ -287,7 +287,7 @@ RETRIEVED CODE REFERENCES:
 For integration with ticketing systems (Jira, ServiceNow, PagerDuty):
 
 ```bash
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --log-file C:\logs\dag_failure.log \
   --repo https://github.com/your-org/your-project \
   --output-format json
@@ -395,7 +395,7 @@ pytest ai_incident_investigator/tests/ -v
 
 ### Config File (Recommended)
 
-Run `python analyze_incident.py --init-config` to create a config file at:
+Run `python run.py --init-config` to create a config file at:
 
 ```
 ~/.ai-incident-investigator/config.yaml
@@ -449,7 +449,7 @@ export AIRFLOW_PASSWORD="your_password"
 ## CLI Reference
 
 ```
-python ai_incident_investigator/cli/analyze_incident.py [OPTIONS]
+python run.py [OPTIONS]
 ```
 
 ### All Available Options
@@ -493,7 +493,7 @@ python ai_incident_investigator/cli/analyze_incident.py [OPTIONS]
 ### Example 1: Analyze a local log file against your org repo
 
 ```bash
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --log-file /var/log/airflow/dag_failures/shipment_pipeline_2026-03-08.log \
   --repo https://github.com/your-org/shipment-service
 ```
@@ -501,7 +501,7 @@ python ai_incident_investigator/cli/analyze_incident.py \
 ### Example 2: Pull logs directly from Airflow and analyze
 
 ```bash
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --dag shipment_pipeline \
   --run scheduled__2026-03-08T06:00:00+00:00 \
   --task process_events \
@@ -511,7 +511,7 @@ python ai_incident_investigator/cli/analyze_incident.py \
 ### Example 3: Re-index your repo after a code deploy
 
 ```bash
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --repo https://github.com/your-org/shipment-service \
   --reindex
 ```
@@ -519,7 +519,7 @@ python ai_incident_investigator/cli/analyze_incident.py \
 ### Example 4: Use a different LLM model with more code snippets
 
 ```bash
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --log-file failure.log \
   --repo https://github.com/your-org/shipment-service \
   --model meta-llama/Llama-3-8B-Instruct \
@@ -529,7 +529,7 @@ python ai_incident_investigator/cli/analyze_incident.py \
 ### Example 5: JSON output for scripting / automation
 
 ```bash
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --log-file failure.log \
   --repo https://github.com/your-org/shipment-service \
   --output-format json > incident_report.json
@@ -541,7 +541,7 @@ python ai_incident_investigator/cli/analyze_incident.py \
 # Set token first
 export GITHUB_TOKEN="ghp_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
 
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --log-file failure.log \
   --repo https://github.com/your-org/private-service \
   --verbose
@@ -550,7 +550,7 @@ python ai_incident_investigator/cli/analyze_incident.py \
 ### Example 7: Full Airflow mode with all connection details inline
 
 ```bash
-python ai_incident_investigator/cli/analyze_incident.py \
+python run.py \
   --dag etl_daily_ingest \
   --run scheduled__2026-03-10T00:00:00+00:00 \
   --task load_to_warehouse \
@@ -762,10 +762,11 @@ ai-log-analyzer/                          # Repository root
 ├── .gitignore                            # Git ignore rules
 ├── requirements.txt                      # Python dependencies
 ├── README.md                             # This file
+├── run.py                                # Root entry point (run from repo root)
 └── ai_incident_investigator/             # Main package
     ├── cli/
     │   ├── __init__.py
-    │   └── analyze_incident.py           # CLI entry point (argparse interface)
+    │   └── analyze_incident.py           # CLI logic (argparse interface)
     ├── src/
     │   ├── __init__.py
     │   ├── incident_analyzer.py          # Main orchestrator — coordinates full pipeline
@@ -851,7 +852,7 @@ On the first run, `sentence-transformers/all-MiniLM-L6-v2` (~80MB) is downloaded
 Try a smaller model or ensure quantization is enabled:
 ```bash
 # Use the smaller Phi-3 mini (default, ~2.4GB with 4-bit quantization)
-python ai_incident_investigator/cli/analyze_incident.py --model microsoft/Phi-3-mini-4k-instruct ...
+python run.py --model microsoft/Phi-3-mini-4k-instruct ...
 
 # Or disable quantization if bitsandbytes causes issues (needs more RAM)
 ```
